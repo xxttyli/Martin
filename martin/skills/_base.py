@@ -20,6 +20,7 @@ This module defines:
 
 from __future__ import annotations
 
+import importlib
 import json
 import os
 from abc import ABC, abstractmethod
@@ -122,3 +123,16 @@ def discover_manifests(skills_dir: str | Path | None = None) -> list[SkillManife
     for manifest_path in sorted(root.glob("*/manifest.json")):
         manifests.append(SkillManifest.from_file(manifest_path))
     return manifests
+
+
+def load_skills(brain=None, settings: Settings | None = None) -> dict[str, BaseSkill]:
+    """Discover and instantiate every skill under martin/skills/.
+
+    Each skill package must expose a ``load(brain, settings)`` callable in its
+    ``skill`` module (the skill-loading convention). Returns a name -> skill map.
+    """
+    skills: dict[str, BaseSkill] = {}
+    for manifest in discover_manifests():
+        module = importlib.import_module(f"martin.skills.{manifest.name}.skill")
+        skills[manifest.name] = module.load(brain=brain, settings=settings)
+    return skills
