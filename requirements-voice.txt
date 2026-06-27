@@ -1,0 +1,13 @@
+# ── Martin voice (STT) dependencies — OPTIONAL ──────────────────────────────
+# Install only when you want push-to-talk speech input:
+#     pip install -r requirements-voice.txt
+#
+# Faster-Whisper uses CTranslate2. On the RTX 4060 Ti it runs on CUDA
+# (float16); it falls back to CPU (int8) automatically if CUDA is unavailable.
+# CUDA acceleration needs the NVIDIA cuBLAS + cuDNN runtime libraries on PATH.
+#
+# Phase 1 is speech-to-text only. Spoken replies (Piper TTS) are deferred.
+
+faster-whisper>=1.0.0
+sounddevice>=0.4.6
+keyboard>=0.13.5

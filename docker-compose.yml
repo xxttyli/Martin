@@ -1,0 +1,34 @@
+# ── Martin infrastructure ───────────────────────────────────────────────────
+# Phase 1 only runs Open WebUI here — the browser/phone chat interface.
+#
+# ChromaDB is NOT here: on native Windows it runs embedded inside Martin
+# (chromadb.PersistentClient writing to ./data/chroma), so memory works even
+# with Docker Desktop closed. If we later need a shared/networked memory store,
+# add a `chroma` service and switch memory.py from PersistentClient to
+# HttpClient (a one-line change isolated to that file).
+#
+# Ollama is installed natively (Windows .exe) for direct GPU access — not here.
+#
+# Open WebUI talks to your native Ollama via host.docker.internal.
+#
+#   Start:  docker compose up -d
+#   Open:   http://localhost:3000  (reachable from your phone at
+#           http://<this-PC-LAN-IP>:3000 on the same network)
+
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: martin-open-webui
+    ports:
+      - "3000:8080"
+    environment:
+      # Reach the natively-installed Ollama on the Windows host.
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - open-webui-data:/app/backend/data
+    restart: unless-stopped
+
+volumes:
+  open-webui-data:

@@ -1,0 +1,23 @@
+# Secrets / config
+.env
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Martin data
+data/
+
+# Claude Code local settings (machine-specific permissions)
+.claude/settings.local.json
+
+# OS / editor
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/
