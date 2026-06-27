@@ -1,0 +1,8 @@
+{
+  "name": "web_search",
+  "description": "Search the web for current, real-time information: news, facts, prices, people, and anything that may have changed recently.",
+  "pillar": ["business", "personal"],
+  "triggers": ["search", "look up", "google", "find out", "what is", "who is", "latest news"],
+  "requires": ["BRAVE_API_KEY"],
+  "phase": 1
+}

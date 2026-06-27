@@ -16,11 +16,12 @@ from martin.core.config import Settings
 
 @pytest.fixture
 def settings():
+    # Use field-name kwargs (pydantic-settings ignores uppercase env-style kwargs).
     return Settings(
         _env_file=None,
-        DEFAULT_MODEL="ollama/qwen3:14b",
-        FAST_MODEL="ollama/mistral:7b",
-        OLLAMA_BASE_URL="http://localhost:11434",
+        default_model="ollama/qwen3:14b",
+        fast_model="ollama/mistral:7b",
+        ollama_base_url="http://localhost:11434",
     )
 
 
