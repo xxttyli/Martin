@@ -33,6 +33,18 @@ from martin.core.config import Settings, get_settings
 
 COLLECTION_NAME = "martin_memory"
 
+# Short definitions for the default pillars, given to the classifier so it tags
+# memories correctly (e.g. publishing/content is "business", not "personal").
+# Custom pillars without a hint fall back to just their name.
+PILLAR_HINTS = {
+    "business": "work, content creation, publishing, brand, clients, revenue, "
+    "AI/tech projects, business strategy",
+    "personal": "the user's personal life: health, family, relationships, "
+    "preferences, appointments, hobbies — anything not work-related",
+    "automation": "the user's computer and tooling: files, shell/scripts, app and "
+    "system control, dev environment",
+}
+
 
 @dataclass
 class Recollection:
@@ -142,6 +154,30 @@ class Memory:
             return None
 
         pillars = self.settings.pillars
+
+        # Describe each pillar so the model tags correctly (with a fallback for
+        # custom pillars that have no predefined hint).
+        pillar_lines = "\n".join(
+            f"- {p}: {PILLAR_HINTS.get(p, p)}" for p in pillars
+        )
+
+        # Surface already-known related memories so the model can decline to
+        # store near-duplicates (rather than relying on a brittle distance
+        # threshold). Best-effort: an empty/failed recall just omits the section.
+        try:
+            existing = self.recall(utterance, n=3)
+        except Exception:
+            existing = []
+        existing_block = ""
+        if existing:
+            existing_text = "\n".join(f"- {r.text}" for r in existing)
+            existing_block = (
+                "\n\nThe user already has these related memories — if this "
+                "information is already captured by one of them, set worth_storing "
+                "to false instead of storing a duplicate:\n"
+                f"{existing_text}"
+            )
+
         judgment = self.brain.structured(
             messages=[
                 {
@@ -151,8 +187,10 @@ class Memory:
                         "long-term. Store only durable, high-signal information: "
                         "decisions, preferences, goals, plans, and recurring "
                         "personal or business facts. Do NOT store questions, "
-                        "greetings, or one-off chitchat. "
-                        f"Allowed pillars: {', '.join(pillars)}."
+                        "greetings, or one-off chitchat.\n\n"
+                        "Choose the SINGLE most appropriate pillar from:\n"
+                        f"{pillar_lines}"
+                        f"{existing_block}"
                     ),
                 },
                 {"role": "user", "content": utterance},

@@ -165,6 +165,38 @@ def test_consider_without_brain_raises(settings, tmp_path):
         mem.consider("anything")
 
 
+def test_consider_prompt_includes_pillar_definitions(settings, tmp_path):
+    # The classifier should be told what each pillar means, so it tags correctly.
+    brain = FakeBrain(
+        MemoryJudgment(worth_storing=True, pillar="business", fact="A fact.")
+    )
+    mem = make_memory(settings, tmp_path, brain=brain)
+    mem.consider("I'm launching a paid course")
+
+    system_msg = brain.calls[0]["messages"][0]["content"]
+    assert "business:" in system_msg
+    assert "content creation" in system_msg  # the business hint
+    assert "personal:" in system_msg
+
+
+def test_consider_surfaces_existing_memories_for_dedup(settings, tmp_path):
+    # Pre-store a fact, then consider a related utterance: the existing memory
+    # must be shown to the model so it can avoid storing a duplicate.
+    brain = FakeBrain(
+        MemoryJudgment(worth_storing=False, pillar="business", fact="")
+    )
+    mem = make_memory(settings, tmp_path, brain=brain)
+    mem.remember("The user publishes videos on Tuesdays", pillar="business")
+
+    result = mem.consider("I publish videos on Tuesdays")
+
+    # Model judged it already-known -> nothing new stored.
+    assert result is None
+    system_msg = brain.calls[0]["messages"][0]["content"]
+    assert "publishes videos on Tuesdays" in system_msg
+    assert "duplicate" in system_msg.lower()
+
+
 # ── pillar-filtered recall ──────────────────────────────────────────────────
 def test_recall_filters_by_pillar(settings, tmp_path):
     mem = make_memory(settings, tmp_path)

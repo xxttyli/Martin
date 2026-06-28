@@ -14,7 +14,7 @@ __pycache__/
 data/
 
 # Claude Code local settings (machine-specific permissions)
-.claude/settings.local.json
+.claude/
 
 # Installers / binaries
 *.exe

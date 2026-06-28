@@ -7,7 +7,7 @@ web awareness, and a skill system that grows over time. It runs on your machine;
 data never leaves it unless you opt in per task.
 
 See [MARTIN_BRIEFING.md](MARTIN_BRIEFING.md) for the full vision and design decisions,
-and [docs/](docs/) for the PRD and architecture (written as the project matures).
+and [docs/](docs/) for the PRD, roadmap, and architecture (written as the project matures).
 
 ---
 
@@ -105,7 +105,7 @@ martin/
   skills/      _base + one folder per skill (web_search, ...)
   interfaces/  cli, voice
 tests/         mirrors the source tree
-docs/          PRD + ARCHITECTURE (written as we build)
+docs/          PRD + ROADMAP + ARCHITECTURE (written as we build)
 ```
 
 Adding a skill = drop a folder with `skill.py` + `manifest.json` into `martin/skills/`.
