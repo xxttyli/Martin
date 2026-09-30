@@ -246,8 +246,9 @@ Both interfaces call the *same* `Martin.handle`; voice merely turns speech into 
   model selection, guards hallucinated skill names, returns a `Route`. *(Superseded
   by the agent loop in the target.)*
 - **`skills/`** — `_base.py` (`SkillManifest`, `SkillResult`, `BaseSkill`,
-  discovery/loading); `web_search/` (Brave → DuckDuckGo, honest failure). Adding a
-  skill = drop a folder; no core changes.
+  discovery/loading); `web_search/` (Brave → DuckDuckGo, honest failure);
+  `tokenized_equity/` (SEC EDGAR + news → tokenized equity launches, matched against a
+  curated regulated-entity registry). Adding a skill = drop a folder; no core changes.
 - **`interfaces/`** — `cli.py` (the `Martin` pipeline + REPL); `voice.py`
   (lazy Faster-Whisper transcriber + push-to-talk capture; TTS deferred to Phase 2).
 

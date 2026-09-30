@@ -1,0 +1,8 @@
+{
+  "name": "tokenized_equity",
+  "description": "Track which companies are launching equity (shares/stock) via tokens through a regulated entity — checks SEC EDGAR filings and news against a registry of licensed transfer agents, broker-dealers, ATSs and DLT venues.",
+  "pillar": ["business"],
+  "triggers": ["tokenized equity", "tokenised equity", "tokenized shares", "tokenised shares", "tokenized stock", "tokenized stocks", "equity token", "equity tokens", "security token", "security tokens", "token launches"],
+  "requires": [],
+  "phase": 1
+}

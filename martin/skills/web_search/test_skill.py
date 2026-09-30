@@ -45,7 +45,7 @@ class FakeDDGS:
     def __exit__(self, *exc):
         return False
 
-    def text(self, query, max_results=5):
+    def text(self, query, max_results=5, timelimit=None):
         return self.results
 
 
@@ -117,7 +117,7 @@ def test_both_providers_down_fails_honestly(mocker):
     )
 
     class BrokenDDGS(FakeDDGS):
-        def text(self, query, max_results=5):
+        def text(self, query, max_results=5, timelimit=None):
             raise RuntimeError("ddg down")
 
     mocker.patch("ddgs.DDGS", BrokenDDGS)

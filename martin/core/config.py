@@ -61,6 +61,13 @@ class Settings(BaseSettings):
         description="Brave Search API key. Blank/None -> DuckDuckGo only.",
     )
 
+    # ── SEC EDGAR ───────────────────────────────────────────────────────────
+    sec_user_agent: str = Field(
+        default="Martin personal research tool admin@example.com",
+        description="User-Agent for SEC EDGAR requests. SEC requires a real "
+        "name + contact email and throttles generic agents.",
+    )
+
     # ── Pillars ─────────────────────────────────────────────────────────────
     # Stored as a raw comma-separated string (env-friendly); exposed parsed via
     # the ``pillars`` computed property.

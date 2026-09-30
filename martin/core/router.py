@@ -96,15 +96,19 @@ class Router:
 
     # ── internals ───────────────────────────────────────────────────────────
     def _match_trigger(self, utterance: str) -> str | None:
+        # The longest (most specific) matching trigger wins, so "tokenized shares"
+        # beats a generic "find out" in the same utterance.
         low = utterance.lower()
+        best: tuple[int, str] | None = None
         for manifest in self.manifests:
             for trigger in manifest.triggers:
                 trigger = trigger.strip().lower()
                 if not trigger:
                     continue
                 if re.search(rf"\b{re.escape(trigger)}\b", low):
-                    return manifest.name
-        return None
+                    if best is None or len(trigger) > best[0]:
+                        best = (len(trigger), manifest.name)
+        return best[1] if best else None
 
     def _model_select(self, utterance: str) -> str | None:
         catalog = "\n".join(

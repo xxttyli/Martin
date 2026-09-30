@@ -31,6 +31,11 @@ class SearchHit:
     title: str
     url: str
     snippet: str
+    date: str | None = None
+
+
+class SearchUnavailable(RuntimeError):
+    """Raised by ``WebSearchSkill.search`` when every provider failed."""
 
 
 class WebSearchSkill(BaseSkill):
@@ -46,37 +51,18 @@ class WebSearchSkill(BaseSkill):
                 latency=time.perf_counter() - start,
             )
 
-        brave_error: str | None = None
-        hits: list[SearchHit] | None = None
-        source: str | None = None
-
-        # 1. Brave (only when a key is configured).
-        if self.settings.has_brave:
-            try:
-                hits = self._brave_search(query)
-                source = "brave"
-            except Exception as exc:  # network/HTTP/parse — fall back gracefully
-                brave_error = f"Brave search failed ({exc})"
-
-        # 2. DuckDuckGo fallback.
-        if not hits:
-            try:
-                hits = self._ddg_search(query)
-                source = "duckduckgo"
-            except Exception as exc:
-                # Both providers are down — report honestly, never confabulate.
-                detail = f"DuckDuckGo failed ({exc})"
-                if brave_error:
-                    detail = f"{brave_error}; {detail}"
-                return SkillResult(
-                    content=(
-                        "I couldn't search the web right now — both providers are "
-                        f"unavailable. {detail}"
-                    ),
-                    success=False,
-                    source=source,
-                    latency=time.perf_counter() - start,
-                )
+        try:
+            hits, source = self.search(query)
+        except SearchUnavailable as exc:
+            # Both providers are down — report honestly, never confabulate.
+            return SkillResult(
+                content=(
+                    "I couldn't search the web right now — both providers are "
+                    f"unavailable. {exc}"
+                ),
+                success=False,
+                latency=time.perf_counter() - start,
+            )
 
         latency = time.perf_counter() - start
         if not hits:
@@ -94,11 +80,57 @@ class WebSearchSkill(BaseSkill):
             latency=latency,
         )
 
+    def search(
+        self,
+        query: str,
+        count: int = DEFAULT_MAX_RESULTS,
+        freshness: str | None = None,
+    ) -> tuple[list[SearchHit], str]:
+        """Return ``(hits, source)``, trying Brave then DuckDuckGo.
+
+        Reusable by other skills that need raw hits rather than formatted text.
+
+        Args:
+            query: The search query.
+            count: Max results to return.
+            freshness: Optional recency window: "d", "w", "m" or "y".
+
+        Raises:
+            SearchUnavailable: when every provider failed.
+        """
+        brave_error: str | None = None
+
+        # 1. Brave (only when a key is configured).
+        if self.settings.has_brave:
+            try:
+                hits = self._brave_search(query, count, freshness)
+                if hits:
+                    return hits, "brave"
+            except Exception as exc:  # network/HTTP/parse — fall back gracefully
+                brave_error = f"Brave search failed ({exc})"
+
+        # 2. DuckDuckGo fallback.
+        try:
+            return self._ddg_search(query, count, freshness), "duckduckgo"
+        except Exception as exc:
+            detail = f"DuckDuckGo failed ({exc})"
+            if brave_error:
+                detail = f"{brave_error}; {detail}"
+            raise SearchUnavailable(detail) from exc
+
     # ── providers ───────────────────────────────────────────────────────────
-    def _brave_search(self, query: str, count: int = DEFAULT_MAX_RESULTS) -> list[SearchHit]:
+    def _brave_search(
+        self,
+        query: str,
+        count: int = DEFAULT_MAX_RESULTS,
+        freshness: str | None = None,
+    ) -> list[SearchHit]:
+        params: dict[str, str | int] = {"q": query, "count": count}
+        if freshness:
+            params["freshness"] = f"p{freshness}"
         resp = httpx.get(
             BRAVE_ENDPOINT,
-            params={"q": query, "count": count},
+            params=params,
             headers={
                 "Accept": "application/json",
                 "X-Subscription-Token": self.settings.brave_api_key or "",
@@ -112,15 +144,23 @@ class WebSearchSkill(BaseSkill):
                 title=r.get("title", ""),
                 url=r.get("url", ""),
                 snippet=r.get("description", ""),
+                date=r.get("page_age") or r.get("age"),
             )
             for r in results[:count]
         ]
 
-    def _ddg_search(self, query: str, count: int = DEFAULT_MAX_RESULTS) -> list[SearchHit]:
+    def _ddg_search(
+        self,
+        query: str,
+        count: int = DEFAULT_MAX_RESULTS,
+        freshness: str | None = None,
+    ) -> list[SearchHit]:
         from ddgs import DDGS  # imported lazily; keeps import of this module cheap
 
         with DDGS() as ddgs:
-            results = list(ddgs.text(query, max_results=count))
+            results = list(
+                ddgs.text(query, max_results=count, timelimit=freshness)
+            )
         return [
             SearchHit(
                 title=r.get("title", ""),

@@ -54,6 +54,14 @@ def test_trigger_matches_multiword_phrase(settings):
     assert route.via == "trigger"
 
 
+def test_most_specific_trigger_wins(settings):
+    tokens = manifest("tokenized_equity", ["tokenized shares"])
+    router = Router(brain=None, settings=settings, manifests=[WEB, tokens])
+    route = router.route("Search for companies launching tokenized shares")
+    assert route.skill == "tokenized_equity"
+    assert route.via == "trigger"
+
+
 def test_trigger_respects_word_boundaries(settings):
     # "research" must NOT trigger the "search" keyword.
     brain = FakeBrain(skill=NO_SKILL)

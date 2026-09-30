@@ -1,0 +1,278 @@
+{
+  "_note": "Curated list of regulated firms that issue, custody, record or trade tokenized securities. Matching a name means the launch names a regulated partner \u2014 it is NOT proof of a current licence. Always confirm on the regulator's register (FINRA BrokerCheck, SEC transfer-agent search, FCA/BaFin/FINMA/MAS registers). Edit freely: add entries or aliases as new venues appear. Set \"match_name\": false for names that are also common words; then only the aliases are matched. Matching is case-sensitive.",
+  "entities": [
+    {
+      "name": "Securitize",
+      "aliases": [
+        "Securitize Markets",
+        "Securitize LLC"
+      ],
+      "roles": [
+        "transfer agent",
+        "broker-dealer",
+        "ATS"
+      ],
+      "regulator": "SEC / FINRA",
+      "jurisdiction": "US"
+    },
+    {
+      "name": "tZERO",
+      "aliases": [
+        "tZERO Markets",
+        "tZERO ATS"
+      ],
+      "roles": [
+        "broker-dealer",
+        "ATS"
+      ],
+      "regulator": "SEC / FINRA",
+      "jurisdiction": "US"
+    },
+    {
+      "name": "INX",
+      "aliases": [
+        "INX Securities",
+        "INX Digital"
+      ],
+      "roles": [
+        "broker-dealer",
+        "ATS"
+      ],
+      "regulator": "SEC / FINRA",
+      "jurisdiction": "US"
+    },
+    {
+      "name": "Prometheum",
+      "aliases": [
+        "Prometheum Capital",
+        "Prometheum ATS"
+      ],
+      "roles": [
+        "special purpose broker-dealer",
+        "ATS"
+      ],
+      "regulator": "SEC / FINRA",
+      "jurisdiction": "US"
+    },
+    {
+      "name": "Texture Capital",
+      "aliases": [],
+      "roles": [
+        "broker-dealer",
+        "ATS"
+      ],
+      "regulator": "SEC / FINRA",
+      "jurisdiction": "US"
+    },
+    {
+      "name": "Oasis Pro",
+      "aliases": [
+        "Oasis Pro Markets"
+      ],
+      "roles": [
+        "broker-dealer",
+        "ATS",
+        "transfer agent"
+      ],
+      "regulator": "SEC / FINRA",
+      "jurisdiction": "US"
+    },
+    {
+      "name": "Dinari",
+      "aliases": [
+        "dShares"
+      ],
+      "roles": [
+        "broker-dealer"
+      ],
+      "regulator": "SEC / FINRA",
+      "jurisdiction": "US"
+    },
+    {
+      "name": "Superstate",
+      "aliases": [],
+      "roles": [
+        "transfer agent"
+      ],
+      "regulator": "SEC",
+      "jurisdiction": "US"
+    },
+    {
+      "name": "Figure",
+      "aliases": [
+        "Figure Securities",
+        "Figure ATS",
+        "Figure Technology",
+        "Figure Markets"
+      ],
+      "roles": [
+        "broker-dealer",
+        "ATS"
+      ],
+      "regulator": "SEC / FINRA",
+      "jurisdiction": "US",
+      "match_name": false
+    },
+    {
+      "name": "Templum",
+      "aliases": [
+        "Templum Markets"
+      ],
+      "roles": [
+        "broker-dealer",
+        "ATS"
+      ],
+      "regulator": "SEC / FINRA",
+      "jurisdiction": "US"
+    },
+    {
+      "name": "North Capital",
+      "aliases": [
+        "North Capital Private Securities",
+        "PPEX ATS"
+      ],
+      "roles": [
+        "broker-dealer",
+        "ATS"
+      ],
+      "regulator": "SEC / FINRA",
+      "jurisdiction": "US"
+    },
+    {
+      "name": "StartEngine",
+      "aliases": [
+        "StartEngine Secondary",
+        "StartEngine Primary"
+      ],
+      "roles": [
+        "broker-dealer",
+        "ATS",
+        "funding portal"
+      ],
+      "regulator": "SEC / FINRA",
+      "jurisdiction": "US"
+    },
+    {
+      "name": "Republic",
+      "aliases": [
+        "OpenDeal Broker",
+        "OpenDeal Portal",
+        "Republic.com",
+        "Republic Digital"
+      ],
+      "roles": [
+        "broker-dealer",
+        "funding portal"
+      ],
+      "regulator": "SEC / FINRA",
+      "jurisdiction": "US",
+      "match_name": false
+    },
+    {
+      "name": "KoreConX",
+      "aliases": [
+        "KoreTransfer"
+      ],
+      "roles": [
+        "transfer agent"
+      ],
+      "regulator": "SEC",
+      "jurisdiction": "US"
+    },
+    {
+      "name": "Vertalo",
+      "aliases": [],
+      "roles": [
+        "transfer agent"
+      ],
+      "regulator": "SEC",
+      "jurisdiction": "US"
+    },
+    {
+      "name": "Backed",
+      "aliases": [
+        "Backed Finance",
+        "Backed Assets",
+        "xStocks"
+      ],
+      "roles": [
+        "tokenized-securities issuer (approved prospectus)"
+      ],
+      "regulator": "FMA Liechtenstein / FINMA",
+      "jurisdiction": "EU / CH",
+      "match_name": false
+    },
+    {
+      "name": "Robinhood Europe",
+      "aliases": [
+        "Robinhood stock tokens"
+      ],
+      "roles": [
+        "investment firm (MiFID II)"
+      ],
+      "regulator": "Bank of Lithuania",
+      "jurisdiction": "EU"
+    },
+    {
+      "name": "21X",
+      "aliases": [],
+      "roles": [
+        "DLT trading & settlement system (DLT Pilot Regime)"
+      ],
+      "regulator": "BaFin",
+      "jurisdiction": "EU"
+    },
+    {
+      "name": "360X",
+      "aliases": [],
+      "roles": [
+        "DLT MTF"
+      ],
+      "regulator": "BaFin",
+      "jurisdiction": "EU"
+    },
+    {
+      "name": "SDX",
+      "aliases": [
+        "SIX Digital Exchange"
+      ],
+      "roles": [
+        "DLT trading facility / CSD"
+      ],
+      "regulator": "FINMA",
+      "jurisdiction": "CH"
+    },
+    {
+      "name": "Sygnum",
+      "aliases": [
+        "Sygnum Bank"
+      ],
+      "roles": [
+        "bank",
+        "tokenization platform"
+      ],
+      "regulator": "FINMA",
+      "jurisdiction": "CH"
+    },
+    {
+      "name": "Archax",
+      "aliases": [],
+      "roles": [
+        "investment firm",
+        "digital securities exchange"
+      ],
+      "regulator": "FCA",
+      "jurisdiction": "UK"
+    },
+    {
+      "name": "ADDX",
+      "aliases": [],
+      "roles": [
+        "recognised market operator",
+        "capital markets services licensee"
+      ],
+      "regulator": "MAS",
+      "jurisdiction": "SG"
+    }
+  ]
+}
