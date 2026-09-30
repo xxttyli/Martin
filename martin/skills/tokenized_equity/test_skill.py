@@ -261,3 +261,40 @@ def test_load_builds_skill_from_manifest():
     assert skill.name == "tokenized_equity"
     assert "tokenized shares" in skill.manifest.triggers
     assert skill.manifest.requires == []
+
+
+# ── daily runs ──────────────────────────────────────────────────────────────
+def test_state_file_flags_only_new_launches(mocker, tmp_path):
+    mocker.patch(
+        "martin.skills.tokenized_equity.skill.httpx.get", side_effect=fake_httpx_get
+    )
+    state = tmp_path / "seen.json"
+    patch_news(mocker, FakeSearcher(NEWS_HITS[:1]))
+    first = make_skill().run("", context={"state_path": state})
+    assert "[NEW] Acme Robotics Inc." in first.content
+
+    # Next day: one fresh news item appears; yesterday's launches are not NEW.
+    patch_news(mocker, FakeSearcher(NEWS_HITS[:2]))
+    second = make_skill().run("", context={"state_path": state})
+    assert "[NEW] Acme Robotics Inc." not in second.content
+    assert "Acme Robotics Inc." in second.content
+    assert "[NEW] Delta Coffee to issue stock tokens" in second.content
+
+
+def test_cli_out_writes_dated_report(mocker, tmp_path):
+    from datetime import date
+
+    from martin.skills.tokenized_equity.__main__ import main
+
+    mocker.patch(
+        "martin.skills.tokenized_equity.skill.httpx.get", side_effect=fake_httpx_get
+    )
+    patch_news(mocker, FakeSearcher(NEWS_HITS))
+    mocker.patch(
+        "martin.skills.tokenized_equity.__main__.load", return_value=make_skill()
+    )
+
+    assert main(["--out", str(tmp_path), "--days", "7"]) == 0
+    report = tmp_path / f"report-{date.today().isoformat()}.txt"
+    assert "Acme Robotics Inc." in report.read_text(encoding="utf-8")
+    assert (tmp_path / "seen.json").exists()

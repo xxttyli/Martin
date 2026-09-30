@@ -87,6 +87,16 @@ Set `SEC_USER_AGENT` in `.env` to your name + email (SEC requires it). A registr
 is a lead, not a licence check — confirm on FINRA BrokerCheck / the regulator's register.
 Edit the registry JSON to add venues as they appear.
 
+**Run it daily** (Windows Task Scheduler, current user, 08:00 by default):
+
+```powershell
+.\scripts\schedule-tokenized-equity.ps1              # or -Time 07:30, -RunNow, -Remove
+```
+
+Each run saves `data\tokenized_equity\report-YYYY-MM-DD.txt`, marks launches not seen by
+earlier runs as **[NEW]**, and appends output/errors to `data\tokenized_equity\run.log`.
+Missed runs (PC off) catch up at next start.
+
 ### 6. (Optional) Voice input
 
 ```powershell

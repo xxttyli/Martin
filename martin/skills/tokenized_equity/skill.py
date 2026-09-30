@@ -140,6 +140,7 @@ class Launch:
     snippet: str = ""
     partners: list[RegulatedEntity] = field(default_factory=list)
     verdict: str = "unverified"
+    new: bool = False  # not seen by a previous run (only set with a state file)
 
     @property
     def sec_filed(self) -> bool:
@@ -219,6 +220,8 @@ class TokenizedEquitySkill(BaseSkill):
             use_news=context.get("news", True),
             max_docs=int(context.get("max_docs", DEFAULT_MAX_DOCS)),
         )
+        if context.get("state_path"):
+            mark_new(launches, context["state_path"])
         latency = time.perf_counter() - start
 
         if not sources:
@@ -426,7 +429,8 @@ class TokenizedEquitySkill(BaseSkill):
                 if l.date:
                     meta.append(l.date)
                 suffix = f" — {', '.join(meta)}" if meta else ""
-                lines.append(f"{i}. {l.company}{suffix}")
+                tag = "[NEW] " if l.new else ""
+                lines.append(f"{i}. {tag}{l.company}{suffix}")
                 for p in l.partners:
                     lines.append(f"   ✓ {p.label()}")
                 lines.append(f"   {l.url}")
@@ -437,6 +441,26 @@ class TokenizedEquitySkill(BaseSkill):
             "regulator's register before relying on it."
         )
         return "\n".join(lines)
+
+
+def mark_new(launches: list[Launch], state_path: str | Path) -> None:
+    """Flag launches whose URL no previous run has seen, then record them.
+
+    The state file is a JSON list of seen URLs, so daily runs highlight what is
+    new since yesterday instead of repeating the whole window.
+    """
+    path = Path(state_path)
+    try:
+        seen = set(json.loads(path.read_text(encoding="utf-8")))
+    except (FileNotFoundError, ValueError):
+        seen = set()
+    for launch in launches:
+        launch.new = launch.url not in seen
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(sorted(seen | {l.url for l in launches}), indent=0),
+        encoding="utf-8",
+    )
 
 
 def _edgar_hit_to_launch(hit: dict) -> Launch | None:
